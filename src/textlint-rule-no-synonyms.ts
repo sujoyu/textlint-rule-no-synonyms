@@ -27,13 +27,15 @@ export interface Options {
      * Default: true
      */
     allowNumber?: boolean;
+    dictUrl?: string | null;
 }
 
 
 export const DefaultOptions: Required<Options> = {
     allows: [],
     allowAlphabet: true,
-    allowNumber: true
+    allowNumber: true,
+    dictUrl: null,
 };
 
 const report: TextlintRuleReporter<Options> = (context, options = {}) => {
@@ -44,7 +46,7 @@ const report: TextlintRuleReporter<Options> = (context, options = {}) => {
     const usedSudachiSynonyms: Set<SudachiSynonyms> = new Set();
     const locationMap: Map<SudachiSynonyms, { index: number }> = new Map();
     const usedItemGroup: Set<ItemGroup> = new Set();
-    const indexPromise = createIndex();
+    const indexPromise = createIndex(options);
     const matchSegment = (segment: string, absoluteIndex: number, keyItemGroupMap: Map<Midashi, ItemGroup[]>) => {
         const itemGroups = keyItemGroupMap.get(segment);
         if (!itemGroups) {

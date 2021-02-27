@@ -1,5 +1,6 @@
 import { fetchDictionary, SudachiSynonyms } from "sudachi-synonyms-dictionary";
 import { isNumberString } from "./is-number";
+import { Options } from "./textlint-rule-no-synonyms";
 
 export type Midashi = string;
 
@@ -59,14 +60,16 @@ $ npm install sudachi-synonyms-dictionary
 };
 export type IndexType = { keyItemGroupMap: Map<Midashi, ItemGroup[]>; SudachiSynonymsItemGroup: Map<SudachiSynonyms, ItemGroup>; };
 let _ret: IndexType | null = null;
-export const createIndex = async (): Promise<IndexType> => {
+export const createIndex = async (options: Options): Promise<IndexType> => {
     if (_ret) {
         return Promise.resolve(_ret);
     }
     assertInstallationSudachiSynonymsDictionary();
     const keyItemGroupMap: Map<Midashi, ItemGroup[]> = new Map();
     const SudachiSynonymsItemGroup: Map<SudachiSynonyms, ItemGroup> = new Map();
-    const SynonymsDictionary = await fetchDictionary();
+    const SynonymsDictionary = await fetchDictionary({
+        url: options.dictUrl || "undefined dictionaly url"
+    });
     SynonymsDictionary.forEach(group => {
         const groupByVocabularyNumber = group.items.reduce((res, item) => {
             res[item.vocabularyNumber!] = (res[item.vocabularyNumber!] || []).concat(item);
